@@ -1,25 +1,11 @@
+//As the few part of the url is common so we are using express routes
+
 const express = require("express");
-const app = express();
-const { people } = require("./data");
+const router = express.Router();
 
-//static assets
-app.use(express.static("./methods-public"));
+let { people } = require("../data");
 
-//parse form data
-app.use(express.urlencoded({ extended: false }));
-
-app.use(express.json());
-
-app.post("/login", (req, res) => {
-  const { name } = req.body;
-  if (name) {
-    return res.status(200).send(`Welcome ${name}`);
-  } else {
-    res.status(401).send("Please Provide Credentials");
-  }
-});
-
-app.get("/api/people", (req, res) => {
+router.get("/", (req, res) => {
   res.status(200).json({
     success: true,
     data: people,
@@ -28,7 +14,7 @@ app.get("/api/people", (req, res) => {
 
 //Post Request
 
-app.post("/api/people", (req, res) => {
+router.post("/", (req, res) => {
   const { name } = req.body;
   if (!name) {
     return res
@@ -41,7 +27,7 @@ app.post("/api/people", (req, res) => {
   });
 });
 
-app.post("/api/people/postman", (req, res) => {
+router.post("/postman", (req, res) => {
   const { name } = req.body;
   if (!name) {
     return res.status(400).json({
@@ -53,7 +39,7 @@ app.post("/api/people/postman", (req, res) => {
 });
 
 //Put Method
-app.put("/api/people/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -77,7 +63,7 @@ app.put("/api/people/:id", (req, res) => {
   });
 });
 
-app.delete("/api/people/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   const { id } = req.params; //req.params.id
   const person = people.find((person) => person.id == id);
   if (!person) {
@@ -93,6 +79,4 @@ app.delete("/api/people/:id", (req, res) => {
   });
 });
 
-app.listen(5000, () => {
-  console.log(`Server is listening on port 5000...`);
-});
+module.exports = router;
